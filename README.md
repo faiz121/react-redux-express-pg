@@ -23,7 +23,7 @@ I have a non redux, react only todoapp here `https://github.com/faiz121/React-To
 1. `git clone https://github.com/faiz121/TodoApp-React-Redux.git`
 2. `npm install`
 3. `mongod` (to start up mongodb instance)
-4. `npm run start`
+4. `npm run start` and `npm run dev` 
 5. Goto `http://localhost:3000`
 
 
