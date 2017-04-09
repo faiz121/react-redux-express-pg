@@ -4,7 +4,7 @@ const app = express();
 const Todo = require('./TodoSchema');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-
+const port = process.env.PORT || 3000;
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -49,4 +49,6 @@ app.use(function(err, req, res, next){
   res.status(500).send({"Error" : err.message})
 });
 
-app.listen(process.env.PORT || 3000);
+app.listen(port, () => {
+  console.log(`listening on port ${port}`);
+});

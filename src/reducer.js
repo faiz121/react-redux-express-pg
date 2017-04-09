@@ -4,9 +4,7 @@ const initialState = {
 };
 
 const setSearchTerm = (state, action) => {
-  const newState = {};
-  Object.assign(newState, state, {searchTerm: action.searchTerm});
-  return newState;
+  return Object.assign({}, state, {searchTerm: action.searchTerm});
 };
 
 const addTodos = (state, action) => {
@@ -20,7 +18,6 @@ const removeTodo = (state, action) => {
 };
 
 function reducer(state = initialState, action) {
-  console.log('2. reducer called');
   switch (action.type) {
     case 'SET_SEARCH_TERM':
       return setSearchTerm(state, action);

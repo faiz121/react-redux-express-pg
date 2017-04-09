@@ -1,16 +1,11 @@
 import React from 'react'
 import TodoList from './TodoList'
 import { connect } from 'react-redux'
-import { removeTodo } from './action'
-import axios from 'axios'
+import { removeTodoToDB } from './action'
 
 const Todo  = React.createClass({
   removeTodo (id) {
-    const { dispatchRemoveTodo } = this.props;
-    axios.delete('http://localhost:3000/api/todos/' +id)
-        .then((res) => {
-          dispatchRemoveTodo(id);
-        });
+    this.props.dispatchRemoveTodo(id);
   },
   render: function () {
     const { todos, searchTerm } = this.props;
@@ -50,7 +45,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatchRemoveTodo(id) {
-      dispatch(removeTodo(id))
+      dispatch(removeTodoToDB(id))
     }
   }
 };
