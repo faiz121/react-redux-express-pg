@@ -12,3 +12,8 @@ typings/
 .npm
 .eslintcache
 .node_repl_history
+db.js
+__pycache__
+config.py
+.DS_Store
+data/
