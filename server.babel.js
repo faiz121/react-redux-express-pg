@@ -7,7 +7,8 @@ pool.connect(function (err, client, done) {
     if (err) {
         console.log("Cannot connect to the DB" + err);
     }
-    client.query('SELECT * FROM film limit 10', function (err, result) {
+    // console.log("heres client: ", client);
+    client.query('SELECT * FROM films limit 10', function (err, result) {
         done();
         if (err) {
             console.log(err);
