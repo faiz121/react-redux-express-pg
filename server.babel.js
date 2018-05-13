@@ -1,10 +1,25 @@
-var express = require('express');
+import express from 'express';
+import pool from './db';
 
+// so if this was a root route we'd want to pass all the todos in our case
+// from todos table
+pool.connect(function (err, client, done) {
+    if (err) {
+        console.log("Cannot connect to the DB" + err);
+    }
+    client.query('SELECT * FROM film limit 10', function (err, result) {
+        done();
+        if (err) {
+            console.log(err);
+        }
+        console.log(result.rows);
+    })
+})
 const app = express();
-const Todo = require('./TodoSchema');
+// const Todo = require('./TodoSchema');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
