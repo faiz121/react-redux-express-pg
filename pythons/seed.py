@@ -4,8 +4,11 @@
 #
 
 import psycopg2
+import os
 import numpy as np
 from config import db_config
+import sys
+filename = sys.argv[1]
 
 try:
     conn = psycopg2.connect(db_config)
@@ -33,10 +36,23 @@ def seed(filepath):
         # [0, 0, 1, 0, 0, 0, 0, 0, 0, 0] represents a 2
         raw_label = feature_sets_and_label[0]
         label = np.zeros(10)
-        label[raw_label] = 1
+        label[int(raw_label)] = 1
 
         # Source is mnist data set
         source = "mnist"
+        serialized_features = str(normalized_features.tolist())
+        serialized_label = str(label.tolist())
 
-        cur.execute("INSERT INTO images (normalized_features, label, source) VALUES (%s, %s, %s)",
-            (normalized_features.tostring(), label.tostring(), source))
+        # try:
+        cur.execute("""INSERT INTO images (features, label, source) VALUES (%s, %s, %s);""", (serialized_features, serialized_label, source))
+        conn.commit()
+        # except psycopg2.DatabaseError, e:
+        #     if conn:
+        #         conn.rollback()
+        
+        #     print('Error %s', e)    
+        #     sys.exit(1)    
+        
+seed(filename)
+cur.close();
+conn.close();
