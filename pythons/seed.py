@@ -49,10 +49,12 @@ def seed(filepath):
         # except psycopg2.DatabaseError, e:
         #     if conn:
         #         conn.rollback()
-        
-        #     print('Error %s', e)    
-        #     sys.exit(1)    
-        
+
+        #     print('Error %s', e)
+        #     sys.exit(1)
+
 seed(filename)
 cur.close();
 conn.close();
+
+# python3 pythons/seed.py data/mnist_test_10.csv
