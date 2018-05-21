@@ -12,13 +12,13 @@ from config import db_config
 # In[41]:
 
 
-try:
-    conn = psycopg2.connect(db_config)
-    print("connected!")
-except:
-    print("I am unable to connect to the database")
-
-cur = conn.cursor()
+# try:
+#     conn = psycopg2.connect(db_config)
+#     print("connected!")
+# except:
+#     print("I am unable to connect to the database")
+#
+# cur = conn.cursor()
 
 
 # In[42]:
@@ -32,6 +32,13 @@ def convert_string_to_np_array(stringified_array):
 
 
 def create_features_and_labels(query):
+    try:
+        conn = psycopg2.connect(db_config)
+        print("connected!")
+    except:
+        print("I am unable to connect to the database")
+
+    cur = conn.cursor()
     cur.execute(query)
     rows = cur.fetchall()
 
@@ -48,6 +55,10 @@ def create_features_and_labels(query):
         labels = np.append(labels, sample_label)
         labels = np.reshape(labels, (-1, 10))
 
+    cur.close();
+    conn.close();
+
     return features, labels
+
 
 # features, labels = create_features_and_labels("SELECT * from images")
