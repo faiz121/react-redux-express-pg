@@ -1,6 +1,7 @@
 const initialState = {
   searchTerm: '',
-  todos: []
+  todos: [],
+  image: []
 };
 
 const setSearchTerm = (state, action) => {
