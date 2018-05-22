@@ -171,24 +171,18 @@ class DrawCanvas extends React.Component {
     return false;
   }
   onButtonClick(){
-    // var canvas = this.state.canvas;
-    //
-    // canvas.style.width = '112px';
-    // canvas.style.height = '112px';
-    // canvas.width  = canvas.offsetWidth;
-    // canvas.height = canvas.offsetHeight;
-
     var ctx = this.state.canvas.getContext('2d');
-
     var dataUrl = this.state.canvas.toDataURL("image/png")
 
-    // axios.get(`/hello?dataUrl=${encodeURIComponent(dataUrl)}`)
-    //   .then(function (response) {
-    //     console.log("data back from backend: ", response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
+    console.log("Data url: ", dataUrl);
+
+    axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`)
+      .then(function (response) {
+        console.log("data back from backend: ", response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   render() {

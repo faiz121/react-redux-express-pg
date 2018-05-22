@@ -7,7 +7,6 @@ pool.connect(function (err, client, done) {
     if (err) {
         console.log("Cannot connect to the DB" + err);
     }
-    // console.log("heres client: ", client);
     client.query('', function (err, result) {
         done();
         if (err) {
