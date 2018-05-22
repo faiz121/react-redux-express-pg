@@ -7,6 +7,7 @@ import store from './store'
 import {Provider} from 'react-redux'
 import Todo from './Todo'
 import { getTodosFromDB } from './action'
+import DrawCanvas from './DrawCanvas'
 
 const App = React.createClass({
   componentDidMount () {
@@ -19,6 +20,7 @@ const App = React.createClass({
             <h1 className="text-center">To Do List</h1>
             <Home/>
             <Todo />
+            <DrawCanvas />
           </div>
         </Provider>
     )

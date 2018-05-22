@@ -7,13 +7,12 @@ pool.connect(function (err, client, done) {
     if (err) {
         console.log("Cannot connect to the DB" + err);
     }
-    // console.log("heres client: ", client);
-    client.query('SELECT * FROM films limit 10', function (err, result) {
+    client.query('', function (err, result) {
         done();
         if (err) {
             console.log(err);
         }
-        console.log(result.rows);
+        console.log('rows', result.rows);
     })
 })
 const app = express();
