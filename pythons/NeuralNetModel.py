@@ -45,8 +45,8 @@ class NeuralNetModel:
         # saves the variables for checkpoints
         self.saver = tf.train.Saver();
 
-        self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images LIMIT 100""")
-        self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images ORDER BY random() LIMIT 100""")
+        self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images LIMIT 5000""")
+        self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images ORDER BY random() LIMIT 5000""")
 
         self.accuracy = 0;
 
@@ -103,6 +103,6 @@ class NeuralNetModel:
 # train_x, train_y = create_features_and_labels("""SELECT * FROM images LIMIT 100""")
 # test_x, test_y = create_features_and_labels("""SELECT *  FROM images ORDER BY random() LIMIT 100""")
 
-a = NeuralNetModel()
-a.train()
-print("A's accuracy: ", a.accuracy)
+model = NeuralNetModel()
+model.train()
+print("A's accuracy: ", model.accuracy)
