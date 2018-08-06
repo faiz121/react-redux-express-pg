@@ -2,9 +2,12 @@ from __future__ import division, print_function, absolute_import
 from flask import Flask, render_template, request, json, jsonify
 from flask_cors import CORS
 import sys
+from pythons import utils
+import numpy as np
 
 app = Flask(__name__)
 CORS(app)
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -16,7 +19,13 @@ def index():
 @app.route("/process_image")
 def process_image():
     dataUrl = request.args.get('dataUrl', '')
-    eprint(dataUrl)
+    pixel_arr = utils.data_url_to_arr(dataUrl)
+    eprint("shape: ", np.shape(pixel_arr))
+    resized_arr = utils.resize_image(dataUrl)
+
+    eprint("resized_arr:", resized_arr)
+    # eprint("warning: shape should be 28x28")
+
     return jsonify({ 'dataUrl': dataUrl })
 
 if __name__ == "__main__":
