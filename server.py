@@ -4,6 +4,9 @@ from flask_cors import CORS
 import sys
 from pythons import utils
 import numpy as np
+from PIL import Image
+import base64
+
 
 app = Flask(__name__)
 CORS(app)
@@ -21,10 +24,11 @@ def process_image():
     dataUrl = request.args.get('dataUrl', '')
     pixel_arr = utils.data_url_to_arr(dataUrl)
     eprint("shape: ", np.shape(pixel_arr))
-    resized_arr = utils.resize_image(dataUrl)
+    # resized_arr = utils.resize_image(dataUrl)
 
-    eprint("resized_arr:", resized_arr)
+    # eprint("resized_arr:", resized_arr)
     # eprint("warning: shape should be 28x28")
+    utils.save_image(dataUrl)
 
     return jsonify({ 'dataUrl': dataUrl })
 
