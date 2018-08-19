@@ -2,10 +2,11 @@ from __future__ import division, print_function, absolute_import
 from flask import Flask, render_template, request, json, jsonify
 from flask_cors import CORS
 import sys
-from pythons import utils
+import utils
 import numpy as np
 from PIL import Image
 import base64
+from NeuralNetModel import NeuralNetModel
 
 
 app = Flask(__name__)
@@ -26,6 +27,9 @@ def process_image():
     np_image = utils.data_url_to_arr(dataUrl, size)
     pixel_arr = utils.np_image_to_array(np_image).tolist()
 
+    model = NeuralNetModel()
+    # model.train()
+    model.run_model(pixel_arr)
     utils.save_image(dataUrl)
     return jsonify({ 'dataUrl': dataUrl })
 

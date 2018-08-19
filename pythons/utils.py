@@ -32,9 +32,9 @@ def resize_image(numpy_array):
 def save_image(data_url):
     img_data = data_url.split(',')[1]
     i = 0
-    while os.path.exists("pythons/tmp/sample_images/sample%s.png" % i):
+    while os.path.exists("tmp/sample_images/sample%s.png" % i):
         i += 1
-    with open("pythons/tmp/sample_images/sample%s.png" % i, "wb") as fh:
+    with open("tmp/sample_images/sample%s.png" % i, "wb") as fh:
         fh.write(base64.b64decode(img_data.encode("utf-8")))
     time.sleep(1)
 
@@ -83,7 +83,7 @@ def np_image_to_array(np_arr):
             pixel_arr = np_arr[row_index][col_index]
             pixel_color = np.max(pixel_arr[:3]) / 255.0
             pixel_alpha = pixel_arr[3] / 255.0
-            pixel_int_value = pixel_color * pixel_alpha
+            pixel_int_value = np.mean([pixel_color, pixel_alpha])
 
             result[row_index][col_index] = pixel_int_value
 
