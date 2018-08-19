@@ -17,4 +17,5 @@ __pycache__
 config.py
 .DS_Store
 data/
-pythons/tmp
+pythons/tmp/model*
+pythons/tmp/checkpoint

@@ -23,7 +23,9 @@ def index():
 def process_image():
     dataUrl = request.args.get('dataUrl', '')
     size = (28, 28)
-    pixel_arr = utils.data_url_to_arr(dataUrl, size)
+    np_image = utils.data_url_to_arr(dataUrl, size)
+    pixel_arr = utils.np_image_to_array(np_image).tolist()
+
     utils.save_image(dataUrl)
     return jsonify({ 'dataUrl': dataUrl })
 
