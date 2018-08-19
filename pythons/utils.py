@@ -72,21 +72,22 @@ def array_to_np_image(arr):
     print('formatted_arr shape: ', np.shape(formatted_arr))
     return formatted_arr
 
-# Outputs UN-flattened array
 def np_image_to_array(np_arr):
     arr_shape = np.shape(np_arr)
     result = np.empty([arr_shape[0], arr_shape[1]], dtype='float')
+    pixel_count = 0
 
     for row_index, row in enumerate(np_arr):
         for col_index, _ in enumerate(row):
+            pixel_count += 1
             pixel_arr = np_arr[row_index][col_index]
             pixel_color = np.max(pixel_arr[:3]) / 255.0
             pixel_alpha = pixel_arr[3] / 255.0
             pixel_int_value = pixel_color * pixel_alpha
-            print("pixel_int_value: ", pixel_int_value)
 
             result[row_index][col_index] = pixel_int_value
 
+    result = result.flatten()
     return result
 
 
