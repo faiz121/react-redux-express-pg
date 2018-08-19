@@ -22,7 +22,8 @@ def index():
 @app.route("/process_image")
 def process_image():
     dataUrl = request.args.get('dataUrl', '')
-    pixel_arr = utils.data_url_to_arr(dataUrl)
+    size = (28, 28)
+    pixel_arr = utils.data_url_to_arr(dataUrl, size)
     utils.save_image(dataUrl)
     return jsonify({ 'dataUrl': dataUrl })
 
