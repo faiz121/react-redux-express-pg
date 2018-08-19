@@ -23,13 +23,7 @@ def index():
 def process_image():
     dataUrl = request.args.get('dataUrl', '')
     pixel_arr = utils.data_url_to_arr(dataUrl)
-    eprint("shape: ", np.shape(pixel_arr))
-    # resized_arr = utils.resize_image(dataUrl)
-
-    # eprint("resized_arr:", resized_arr)
-    # eprint("warning: shape should be 28x28")
     utils.save_image(dataUrl)
-
     return jsonify({ 'dataUrl': dataUrl })
 
 if __name__ == "__main__":
