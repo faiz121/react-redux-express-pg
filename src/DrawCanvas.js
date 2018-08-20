@@ -15,7 +15,8 @@ class DrawCanvas extends React.Component {
       lastX: 0,
       lastY: 0,
       history: [],
-      brushColor: '#0000ff'
+      brushColor: '#0000ff',
+      guess: 0,
     };
     // this.handleMouseDown = this.handleMouseDown.bind(this)
     // this.handleMouseUp = this.handleMouseUp.bind(this)
@@ -173,12 +174,12 @@ class DrawCanvas extends React.Component {
   onButtonClick(){
     var ctx = this.state.canvas.getContext('2d');
     var dataUrl = this.state.canvas.toDataURL("image/png")
-
-    console.log("Data url: ", dataUrl);
+    var self = this;
 
     axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`)
       .then(function (response) {
         console.log("data back from backend: ", response);
+        self.setState({guess: response.data.guess})
       })
       .catch(function (error) {
         console.log(error);
@@ -186,6 +187,7 @@ class DrawCanvas extends React.Component {
   }
 
   render() {
+    const guess = this.state.guess
     return (
       <div>
         <h2>Drawing Canvas </h2>
@@ -203,8 +205,9 @@ class DrawCanvas extends React.Component {
         >
         </canvas>
         <button type="button" onClick = { this.onButtonClick.bind(this) } >
-          Click Me!
+          Test!
         </button>
+        <div> Guess: { guess } </div>
       </div>
     );
   }

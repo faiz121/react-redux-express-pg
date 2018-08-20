@@ -29,10 +29,10 @@ def process_image():
 
     model = NeuralNetModel()
     # model.train()
-    result, one_hot_result = model.run_model(pixel_arr)
+    guess, one_hot_result = model.run_model(pixel_arr)
     utils.save_image(dataUrl)
     eprint("type ------ ", type(one_hot_result))
-    return jsonify(result=json.dumps(result.tolist()), dataUrl=dataUrl, one_hot_result=json.dumps(one_hot_result))
+    return jsonify(guess=json.dumps(guess.tolist()), dataUrl=dataUrl, one_hot_result=json.dumps(one_hot_result))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=4002)
