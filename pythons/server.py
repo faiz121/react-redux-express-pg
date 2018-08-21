@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 import base64
 from NeuralNetModel import NeuralNetModel
+from add_to_db import add_to_db
 
 
 app = Flask(__name__)
@@ -31,8 +32,20 @@ def process_image():
     # model.train()
     guess, one_hot_result = model.run_model(pixel_arr)
     utils.save_image(dataUrl)
-    eprint("type ------ ", type(one_hot_result))
     return jsonify(guess=json.dumps(guess.tolist()), dataUrl=dataUrl, one_hot_result=json.dumps(one_hot_result))
+
+@app.route("/add_training_image")
+def add_training_image():
+    dataUrl = request.args.get('dataUrl', '')
+    label = request.args.get('label', '')
+    size = (28, 28)
+    np_image = utils.data_url_to_arr(dataUrl, size)
+    features = utils.np_image_to_array(np_image).tolist()
+
+    source = "web_canvas"
+    # add_to_db("array", "value", source)
+    eprint("yoyoyoyoyoyoyoyoyoy", type(features), label, source)
+    return "200 OK"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=4002)

@@ -4,20 +4,22 @@ import { connect } from 'react-redux'
 import { SliderPicker } from 'react-color';
 import axios from 'axios'
 
+const DEFAULT_STATE = {
+  canvas: null,
+  context: null,
+  drawing: false,
+  lastX: 0,
+  lastY: 0,
+  history: [],
+  brushColor: '#0000ff',
+  guess: 0,
+  trainingValue: 0,
+}
 class DrawCanvas extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      canvas: null,
-      context: null,
-      drawing: false,
-      lastX: 0,
-      lastY: 0,
-      history: [],
-      brushColor: '#0000ff',
-      guess: 0,
-    };
+    this.state = DEFAULT_STATE;
     // this.handleMouseDown = this.handleMouseDown.bind(this)
     // this.handleMouseUp = this.handleMouseUp.bind(this)
     // this.onClick = this.onClick.bind(this)
@@ -186,6 +188,10 @@ class DrawCanvas extends React.Component {
       });
   }
 
+  onTrainingButtonClick() {
+    console.log(`training button clicked... adding ${this.state.trainingValue} to database`)
+  }
+
   render() {
     const guess = this.state.guess
     return (
@@ -208,6 +214,21 @@ class DrawCanvas extends React.Component {
           Test!
         </button>
         <div> Guess: { guess } </div>
+        <div> Training </div>
+        <input type="text"
+           onChange={(e) => {
+             const trainingValue = parseInt(e.target.value)
+             if(trainingValue < 0 || trainingValue > 9) {
+               return
+             } else {
+               this.setState({ 'trainingValue': e.target.value })
+             }
+           }}
+           value={this.state.trainingValue}
+            placeholder='search ...'/>
+        <button type="button" onClick = { this.onTrainingButtonClick.bind(this) } >
+          Add Training Data to DB!
+        </button>
       </div>
     );
   }
