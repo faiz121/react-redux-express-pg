@@ -20,6 +20,7 @@ class DrawCanvas extends React.Component {
   constructor(props) {
     super(props);
     this.state = DEFAULT_STATE;
+    this.onClearButtonClick = this.onClearButtonClick.bind(this);
     // this.handleMouseDown = this.handleMouseDown.bind(this)
     // this.handleMouseUp = this.handleMouseUp.bind(this)
     // this.onClick = this.onClick.bind(this)
@@ -188,6 +189,20 @@ class DrawCanvas extends React.Component {
       });
   }
 
+  onClearButtonClick(){
+
+    var ctx = this.state.canvas.getContext('2d');
+    ctx.clearRect(0, 0, this.state.canvas.width, this.state.canvas.height);
+
+    this.setState({
+      canvas: null,
+      context: null,
+      drawing: false,
+      lastX: 0,
+      lastY: 0,
+    })
+  }
+
   onTrainingButtonClick() {
     var ctx = this.state.canvas.getContext('2d');
     var dataUrl = this.state.canvas.toDataURL("image/png")
@@ -224,6 +239,9 @@ class DrawCanvas extends React.Component {
         </canvas>
         <button type="button" onClick = { this.onButtonClick.bind(this) } >
           Test!
+        </button>
+        <button type="button" onClick = { this.onClearButtonClick.bind(this) } >
+          Clear
         </button>
         <div> Guess: { guess } </div>
         <div> Training </div>
