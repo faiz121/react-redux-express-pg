@@ -5,7 +5,7 @@ from create_features_and_labels import create_features_and_labels
 
 class NeuralNetModel:
     # To build your model, you only to pass a "configuration" which is a dictionary
-    def __init__(self, checkpoint_folder="", train_limit=1000, test_limit=5000):
+    def __init__(self, source, checkpoint_folder="", train_limit=1000, test_limit=5000):
         tf.reset_default_graph()
 
         self.N_NODES_HL1 = 500
@@ -45,6 +45,7 @@ class NeuralNetModel:
 
         # saves the variables for checkpoints
         self.saver = tf.train.Saver();
+        self.source = source
         self.accuracy = 0;
         self.checkpoint_folder = "./tmp" + checkpoint_folder
         self.train_limit = train_limit
@@ -67,8 +68,8 @@ class NeuralNetModel:
         return output
 
     def train(self):
-        self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images LIMIT %s""" % self.train_limit)
-        self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images ORDER BY random() LIMIT %s""" % self.test_limit)
+        self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images WHERE source='%s' LIMIT %s""" %(self.source, self.train_limit))
+        self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images WHERE source='%s' ORDER BY random() LIMIT %s""" %(self.source, self.test_limit))
 
         train_x = self.train_x
         train_y = self.train_y
