@@ -28,11 +28,21 @@ def process_image():
     np_image = utils.data_url_to_arr(dataUrl, size)
     pixel_arr = utils.np_image_to_array(np_image).tolist()
 
-    model = NeuralNetModel()
-    # model.train()
-    guess, one_hot_result = model.run_model(pixel_arr)
+    mnist_model = NeuralNetModel(checkpoint_folder="/mnist", train_limit=5000, test_limit=1000)
+    # mnist_model.train()
+    mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
+
+    web_canvas_model = NeuralNetModel(checkpoint_folder="/web_canvas", train_limit=5000, test_limit=1000)
+    # web_canvas_model.train()
+    web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
+
     utils.save_image(dataUrl)
-    return jsonify(guess=json.dumps(guess.tolist()), dataUrl=dataUrl, one_hot_result=json.dumps(one_hot_result))
+    return jsonify(
+        mnist_guess=json.dumps(mnist_guess.tolist()),
+        mnist_one_hot_result=json.dumps(mnist_one_hot_result),
+        web_canvas_guess=json.dumps(web_canvas_guess.tolist()),
+        web_canvas_one_hot_result=json.dumps(web_canvas_one_hot_result)
+    )
 
 @app.route("/add_training_image")
 def add_training_image():

@@ -5,7 +5,7 @@ from create_features_and_labels import create_features_and_labels
 
 class NeuralNetModel:
     # To build your model, you only to pass a "configuration" which is a dictionary
-    def __init__(self):
+    def __init__(self, checkpoint_folder="", train_limit=1000, test_limit=5000):
         tf.reset_default_graph()
 
         self.N_NODES_HL1 = 500
@@ -46,8 +46,9 @@ class NeuralNetModel:
         # saves the variables for checkpoints
         self.saver = tf.train.Saver();
         self.accuracy = 0;
-        self.train_limit = 5000
-        self.test_limit = 1000
+        self.checkpoint_folder = "./tmp" + checkpoint_folder
+        self.train_limit = train_limit
+        self.test_limit = test_limit
 
     def create_nnet_model(self, data):
         print("creating model...")
@@ -95,7 +96,7 @@ class NeuralNetModel:
                     epoch_loss += c
                     i += self.BATCH_SIZE
 
-                self.saver.save(sess, "./tmp/model.ckpt")
+                self.saver.save(sess, self.checkpoint_folder + "/model.ckpt")
                 print('Epoch', epoch + 1, 'completed out of', self.HM_EPOCHS, 'loss:', epoch_loss)
 
             print('prediction: ', prediction)
@@ -120,7 +121,7 @@ class NeuralNetModel:
 
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
-            self.saver.restore(sess, "./tmp/model.ckpt")
+            self.saver.restore(sess, self.checkpoint_folder + "/model.ckpt")
             print("input_data: ", input_data)
             features = self.standardize_input_data(input_data)
             print("features: ", features)

@@ -12,7 +12,7 @@ const DEFAULT_STATE = {
   lastY: 0,
   history: [],
   brushColor: '#0000ff',
-  guess: 0,
+  guess: { 'mnist': 0, 'webCanvas': 0},
   trainingValue: 0,
 }
 class DrawCanvas extends React.Component {
@@ -182,7 +182,12 @@ class DrawCanvas extends React.Component {
     axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`)
       .then(function (response) {
         console.log("data back from backend(process_image): ", response);
-        self.setState({guess: response.data.guess})
+        self.setState({
+          guess: {
+            'mnist': response.data.mnist_guess,
+            'webCanvas': response.data.web_canvas_guess
+          }
+        })
       })
       .catch(function (error) {
         console.log(error);
@@ -190,17 +195,8 @@ class DrawCanvas extends React.Component {
   }
 
   onClearButtonClick(){
-
     var ctx = this.state.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.state.canvas.width, this.state.canvas.height);
-
-    this.setState({
-      canvas: null,
-      context: null,
-      drawing: false,
-      lastX: 0,
-      lastY: 0,
-    })
   }
 
   onTrainingButtonClick() {
@@ -220,7 +216,8 @@ class DrawCanvas extends React.Component {
   }
 
   render() {
-    const guess = this.state.guess
+    const mnistGuess = this.state.guess.mnist;
+    const webCanvasGuess = this.state.guess.webCanvas;
     return (
       <div>
         <h2>Drawing Canvas </h2>
@@ -243,7 +240,8 @@ class DrawCanvas extends React.Component {
         <button type="button" onClick = { this.onClearButtonClick.bind(this) } >
           Clear
         </button>
-        <div> Guess: { guess } </div>
+        <div> mnistGuess: { mnistGuess } </div>
+        <div> webCanvasGuess: { webCanvasGuess } </div>
         <div> Training </div>
         <input type="text"
            onChange={(e) => {
