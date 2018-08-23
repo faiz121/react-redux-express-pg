@@ -14,7 +14,7 @@ cur = conn.cursor()
 def add_to_db(features, label, source):
     cur.execute("""INSERT INTO images (features, label, source) VALUES (%s, %s, %s);""", (features, label, source))
     conn.commit()
-    cur.close();
-    conn.close();
+    # cur.close();
+    # conn.close();
     print("features, labels, source: ", features, label, source)
     return source

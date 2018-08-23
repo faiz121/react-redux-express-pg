@@ -194,9 +194,10 @@ class DrawCanvas extends React.Component {
     var self = this;
 
     console.log(`training button clicked... adding ${this.state.trainingValue} to database`)
-    axios.get(`http://localhost:4002/add_training_image?dataUrl=${encodeURIComponent(dataUrl)}&label=${this.state.trainingValue}`)
+    axios.get(`http://localhost:4002/add_training_image?label=${this.state.trainingValue}&dataUrl=${encodeURIComponent(dataUrl)}`)
       .then(function (response) {
-        console.log("data back from backend (add_training_image): ", response);
+        console.log("data back from backend(add_training_image): ", response);
+        self.setState({guess: response.data.guess})
       })
       .catch(function (error) {
         console.log(error);

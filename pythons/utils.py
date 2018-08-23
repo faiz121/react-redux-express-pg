@@ -13,6 +13,13 @@ import matplotlib.pyplot as plt
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+# return numpy array
+def int_to_one_hot(i):
+    i = int(i)
+    label = np.zeros(10)
+    label[int(i)] = 1
+    return label
+
 def data_url_to_arr(data_url, size):
     imgstr = re.search(r'base64,(.*)', data_url).group(1)
     image_bytes = io.BytesIO(base64.b64decode(imgstr))
