@@ -43,7 +43,7 @@ def add_training_image():
     features = utils.np_image_to_array(np_image).tolist()
 
     source = "web_canvas"
-    # add_to_db("array", "value", source)
+    add_to_db("array", "value", source)
     eprint("yoyoyoyoyoyoyoyoyoy", type(features), label, source)
     return "200 OK"
 

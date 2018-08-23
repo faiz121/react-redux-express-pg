@@ -180,7 +180,7 @@ class DrawCanvas extends React.Component {
 
     axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`)
       .then(function (response) {
-        console.log("data back from backend: ", response);
+        console.log("data back from backend(process_image): ", response);
         self.setState({guess: response.data.guess})
       })
       .catch(function (error) {
@@ -189,7 +189,18 @@ class DrawCanvas extends React.Component {
   }
 
   onTrainingButtonClick() {
+    var ctx = this.state.canvas.getContext('2d');
+    var dataUrl = this.state.canvas.toDataURL("image/png")
+    var self = this;
+
     console.log(`training button clicked... adding ${this.state.trainingValue} to database`)
+    axios.get(`http://localhost:4002/add_training_image?dataUrl=${encodeURIComponent(dataUrl)}&label=${this.state.trainingValue}`)
+      .then(function (response) {
+        console.log("data back from backend (add_training_image): ", response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   render() {
