@@ -35,11 +35,12 @@ class NetStatistics extends React.Component {
       <div className="net-statistics">
         <div>
           name: { name }
-          values: { this.createNodeValuesChart(this.props.nodeValues) }
-          prediction: { prediction }
         </div>
         <div>
           { this.createNodeValuesChart() }
+        </div>
+        <div>
+          prediction: { prediction }
         </div>
       </div>
     );
