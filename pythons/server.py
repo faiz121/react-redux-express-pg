@@ -23,25 +23,41 @@ def index():
 # http://localhost:4002/api/process_image?dataUrl=DATA_URL
 @app.route("/process_image")
 def process_image():
-    dataUrl = request.args.get('dataUrl', '')
-    size = (28, 28)
-    np_image = utils.data_url_to_arr(dataUrl, size)
-    pixel_arr = utils.np_image_to_array(np_image).tolist()
+    # dataUrl = request.args.get('dataUrl', '')
+    # size = (28, 28)
+    # np_image = utils.data_url_to_arr(dataUrl, size)
+    # pixel_arr = utils.np_image_to_array(np_image).tolist()
+    #
+    # mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist", train_limit=5000, test_limit=1000)
+    # # mnist_model.train()
+    # mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
+    #
+    # web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas", train_limit=5000, test_limit=1000)
+    # # web_canvas_model.train()
+    # web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
+    #
+    # utils.save_image(dataUrl)
 
-    mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist", train_limit=5000, test_limit=1000)
-    # mnist_model.train()
-    mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
 
-    web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas", train_limit=5000, test_limit=1000)
-    # web_canvas_model.train()
-    web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
+    mnist_guess = np.array([1])
+    mnist_one_hot_result = [1, 2, 3, 4, 5]
+    web_canvas_guess = np.array([1])
+    web_canvas_one_hot_result = [1, 2, 3, 4, 5]
 
-    utils.save_image(dataUrl)
+    data = [
+        {
+            'name': 'mnist',
+            'prediciton': int(mnist_guess[0]),
+            'netStatistics': json.dumps(mnist_one_hot_result)
+        },
+        {
+            'name': 'web_canvas',
+            'prediciton': int(web_canvas_guess[0]),
+            'netStatistics': json.dumps(web_canvas_one_hot_result)
+        }
+    ]
     return jsonify(
-        mnist_guess=json.dumps(mnist_guess.tolist()),
-        mnist_one_hot_result=json.dumps(mnist_one_hot_result),
-        web_canvas_guess=json.dumps(web_canvas_guess.tolist()),
-        web_canvas_one_hot_result=json.dumps(web_canvas_one_hot_result)
+        data=json.dumps(data)
     )
 
 @app.route("/add_training_image")
