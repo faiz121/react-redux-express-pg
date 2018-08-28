@@ -191,6 +191,7 @@ class DrawCanvas extends React.Component {
             'webCanvas': response.data.web_canvas_guess
           }
         })
+        self.props.dispatchSetNetStatistics(response.data.netStatistics)
       })
       .catch(function (error) {
         console.log(error);

@@ -1,5 +1,16 @@
 const initialState = {
-  netStatistics: [1, 2, 3],
+  netStatistics: [
+    {
+      'name': 'mnist',
+      'prediciton': 1,
+      'netStatistics': [1, 2, 3]
+    },
+    {
+      'name': 'web_canvas',
+      'prediciton': 2,
+      'netStatistics': [1, 2, 3]
+    }
+  ],
 };
 
 const setNetStatistics = (state, action) => {

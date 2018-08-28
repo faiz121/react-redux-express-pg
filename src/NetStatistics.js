@@ -20,7 +20,7 @@ class NetStatistics extends React.Component {
     const netStatistics = this.props.netStatistics;
     console.log("nodeValues: ", netStatistics)
     return(
-      netStatistics.map( (val, i) => {
+      netStatistics.map( (netStat, i) => {
         return <div key={i}> { val }</div>
       })
     )
@@ -32,15 +32,16 @@ class NetStatistics extends React.Component {
 
     return (
       <div className="net-statistics">
-        <div>
-          name: { name }
-        </div>
-        <div>
-          { this.createNetStatisticsChart() }
-        </div>
-        <div>
-          prediction: { prediction }
-        </div>
+          {
+            this.props.netStatistics.map( (netStat, i) => {
+              return <div key={"netStatList" + i}>
+                <ul>
+                  <li> name: { netStat.name } </li>
+                  <li> prediction: { netStat.prediciton } </li>
+                </ul>
+              </div>
+            })
+          }
       </div>
     );
   }
