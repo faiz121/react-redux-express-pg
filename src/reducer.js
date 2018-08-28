@@ -3,12 +3,12 @@ const initialState = {
     {
       'name': 'mnist',
       'prediction': 1,
-      'oneHotResult': [1, 2, 3]
+      'oneHotResult': [1, 2, -3, 2, 1, -2 ,3, 8, 0, 9]
     },
     {
       'name': 'web_canvas',
       'prediction': 2,
-      'oneHotResult': [1, 2, 3]
+      'oneHotResult': [9, 8, 7, 8, 9, -5, 4, 3, 2, 1]
     }
   ],
 };

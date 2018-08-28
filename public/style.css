@@ -12,8 +12,11 @@ body {
 
 .net-statistics-wrapper {
   background-color: #ffffff;
-  width: 500px;
-  height: 250px;
+  padding-left: 50px;
+  padding-right: 50px;
+  max-width: 100vw;
+  width: 100vw;
+  height: 100vh;
   color: orange;
   display: flex;
   flex-direction: row;
@@ -22,12 +25,12 @@ body {
 
 .net-statistics {
   background-color: blue;
-  width: 200px;
-  height: 200px;
+  width: 40%;
+  height: 500px;
 }
 
 .one-hot-result-container {
   background-color: green;
-  width: 180px;
-  height: 150px;
+  width: 100%;
+  height: 400px;
 }
