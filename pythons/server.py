@@ -23,25 +23,25 @@ def index():
 # http://localhost:4002/api/process_image?dataUrl=DATA_URL
 @app.route("/process_image")
 def process_image():
-    # dataUrl = request.args.get('dataUrl', '')
-    # size = (28, 28)
-    # np_image = utils.data_url_to_arr(dataUrl, size)
-    # pixel_arr = utils.np_image_to_array(np_image).tolist()
-    #
-    # mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist", train_limit=5000, test_limit=1000)
-    # # mnist_model.train()
-    # mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
-    #
-    # web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas", train_limit=5000, test_limit=1000)
-    # # web_canvas_model.train()
-    # web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
-    #
-    # utils.save_image(dataUrl)
+    dataUrl = request.args.get('dataUrl', '')
+    size = (28, 28)
+    np_image = utils.data_url_to_arr(dataUrl, size)
+    pixel_arr = utils.np_image_to_array(np_image).tolist()
 
-    mnist_guess = 1
-    mnist_one_hot_result = [1, 2, 3, 4, 5]
-    web_canvas_guess = 1
-    web_canvas_one_hot_result = [1, 2, 3, 4, 5]
+    mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist", train_limit=5000, test_limit=1000)
+    # mnist_model.train()
+    mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
+
+    web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas", train_limit=5000, test_limit=1000)
+    # web_canvas_model.train()
+    web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
+
+    utils.save_image(dataUrl)
+
+    # mnist_guess = 1
+    # mnist_one_hot_result = [1, 2, 3, 4, 5]
+    # web_canvas_guess = 1
+    # web_canvas_one_hot_result = [1, 2, 3, 4, 5]
 
     data = [
         {
