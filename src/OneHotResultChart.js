@@ -1,14 +1,13 @@
 import React, { PropTypes } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux'
-import OneHotResultChart from './OneHotResultChart'
 
-class NetStatistics extends React.Component {
+class OneHotResultChart extends React.Component {
 
   constructor(props) {
     super(props);
-    this.createNetStatisticsChart = this.createNetStatisticsChart.bind(this);
-    // this.state = DEFAULT_STATE;
+    console.log("props: ", props)
+    this.createOneHotResultChartChart = this.createOneHotResultChartChart.bind(this);
   }
 
   componentDidMount(){
@@ -17,7 +16,7 @@ class NetStatistics extends React.Component {
   onClearButtonClick(){
   };
 
-  createNetStatisticsChart() {
+  createOneHotResultChartChart() {
     const netStatistics = this.props.netStatistics;
     console.log("nodeValues: ", netStatistics)
     return(
@@ -28,18 +27,11 @@ class NetStatistics extends React.Component {
   }
 
   render() {
-    const name = this.props.name;
-    const prediction = this.props.prediction;
-
     return (
       <div className="net-statistics">
           {
-            this.props.netStatistics.map( (netStat, i) => {
-              return <div key={"netStatList" + i}>
-                  <div> name: { netStat.name } </div>
-                  <div> prediction: { netStat.prediction } </div>
-                  <OneHotResultChart oneHotResult={ netStat.oneHotResult } />
-              </div>
+            this.props.oneHotResult.map( (ohr, i) => {
+              return <div key={"ohr" + i}> {ohr} </div>
             })
           }
       </div>
@@ -53,7 +45,7 @@ const mapStateToProps = (state) => {
   }
 };
 
-NetStatistics.defaultProps = { };
+OneHotResultChart.defaultProps = { };
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -63,4 +55,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NetStatistics);
+export default connect(mapStateToProps, mapDispatchToProps)(OneHotResultChart);

@@ -2,13 +2,13 @@ const initialState = {
   netStatistics: [
     {
       'name': 'mnist',
-      'prediciton': 1,
-      'netStatistics': [1, 2, 3]
+      'prediction': 1,
+      'oneHotResult': [1, 2, 3]
     },
     {
       'name': 'web_canvas',
-      'prediciton': 2,
-      'netStatistics': [1, 2, 3]
+      'prediction': 2,
+      'oneHotResult': [1, 2, 3]
     }
   ],
 };

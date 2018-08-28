@@ -46,13 +46,13 @@ def process_image():
     data = [
         {
             'name': 'mnist',
-            'prediciton': mnist_guess,
-            'netStatistics': mnist_one_hot_result
+            'prediction': mnist_guess,
+            'oneHotResult': mnist_one_hot_result
         },
         {
             'name': 'web_canvas',
-            'prediciton': web_canvas_guess,
-            'netStatistics': web_canvas_one_hot_result
+            'prediction': web_canvas_guess,
+            'oneHotResult': web_canvas_one_hot_result
         }
     ]
     return jsonify(netStatistics=data)
