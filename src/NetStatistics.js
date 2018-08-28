@@ -6,7 +6,7 @@ class NetStatistics extends React.Component {
 
   constructor(props) {
     super(props);
-    this.createNodeValuesChart = this.createNodeValuesChart.bind(this);
+    this.createNetStatisticsChart = this.createNetStatisticsChart.bind(this);
     // this.state = DEFAULT_STATE;
   }
 
@@ -16,7 +16,7 @@ class NetStatistics extends React.Component {
   onClearButtonClick(){
   };
 
-  createNodeValuesChart() {
+  createNetStatisticsChart() {
     const netStatistics = this.props.netStatistics;
     console.log("nodeValues: ", netStatistics)
     return(
@@ -28,7 +28,6 @@ class NetStatistics extends React.Component {
 
   render() {
     const name = this.props.name;
-    const nodeValues = this.props.nodeValues;
     const prediction = this.props.prediction;
 
     return (
@@ -37,7 +36,7 @@ class NetStatistics extends React.Component {
           name: { name }
         </div>
         <div>
-          { this.createNodeValuesChart() }
+          { this.createNetStatisticsChart() }
         </div>
         <div>
           prediction: { prediction }
