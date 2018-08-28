@@ -6,6 +6,7 @@ class NetStatistics extends React.Component {
 
   constructor(props) {
     super(props);
+    this.createNodeValuesChart = this.createNodeValuesChart.bind(this);
     // this.state = DEFAULT_STATE;
   }
 
@@ -15,6 +16,16 @@ class NetStatistics extends React.Component {
   onClearButtonClick(){
   };
 
+  createNodeValuesChart() {
+    const netStatistics = this.props.netStatistics;
+    console.log("nodeValues: ", netStatistics)
+    return(
+      netStatistics.map( (val, i) => {
+        return <div key={i}> { val }</div>
+      })
+    )
+  }
+
   render() {
     const name = this.props.name;
     const nodeValues = this.props.nodeValues;
@@ -22,16 +33,23 @@ class NetStatistics extends React.Component {
 
     return (
       <div className="net-statistics">
-        { name }
-        { nodeValues }
-        { prediction }
+        <div>
+          name: { name }
+          values: { this.createNodeValuesChart(this.props.nodeValues) }
+          prediction: { prediction }
+        </div>
+        <div>
+          { this.createNodeValuesChart() }
+        </div>
       </div>
     );
   }
 };
 
 const mapStateToProps = (state) => {
-  return { }
+  return {
+    netStatistics: state.netStatistics
+  }
 };
 
 NetStatistics.defaultProps = { };
