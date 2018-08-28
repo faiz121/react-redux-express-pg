@@ -3,6 +3,8 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux'
 import { SliderPicker } from 'react-color';
 import axios from 'axios'
+import { setNetStatistics } from './action'
+
 
 const DEFAULT_STATE = {
   canvas: null,
@@ -208,7 +210,6 @@ class DrawCanvas extends React.Component {
     axios.get(`http://localhost:4002/add_training_image?label=${this.state.trainingValue}&dataUrl=${encodeURIComponent(dataUrl)}`)
       .then(function (response) {
         console.log("data back from backend(add_training_image): ", response);
-        self.setState({guess: response.data.guess})
       })
       .catch(function (error) {
         console.log(error);
@@ -257,6 +258,9 @@ class DrawCanvas extends React.Component {
         <button type="button" onClick = { this.onTrainingButtonClick.bind(this) } >
           Add Training Data to DB!
         </button>
+        <div>
+          {this.props.netStatistics.length}
+        </div>
       </div>
     );
   }
@@ -273,7 +277,7 @@ class DrawCanvas extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    image: state.image
+    netStatistics: state.netStatistics
   }
 };
 
@@ -289,9 +293,9 @@ DrawCanvas.defaultProps = {
 const mapDispatchToProps = (dispatch) => {
   // console.log(`setSearchTerm ${setSearchTerm}`);
   return {
-    // dispatchSetSearchTerm (searchTerm) {
-    //   dispatch(setSearchTerm(searchTerm)) // dispatch({ type: 'SET_SEARCH_TERM', searchTerm = searchTerm })
-    // },
+    dispatchSetNetStatistics (netStatistics) {
+      dispatch(setNetStatistics(netStatistics)) // dispatch({ type: 'SET_SEARCH_TERM', searchTerm = searchTerm })
+    },
     // dispatchAddTodo(todo) {
     //   dispatch(postTodoToDB(todo))
     // }

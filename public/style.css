@@ -9,3 +9,11 @@ html {
 body {
     background-color: skyblue;
 }
+
+.net-statistics {
+  background-color: #ffffff;
+  width: 100px;
+  height: 100px;
+  color: red;
+
+}

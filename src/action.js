@@ -1,7 +1,7 @@
 import axios from 'axios';
-export function setSearchTerm(searchTerm) {
-  console.log('1. action creater called');
-  return { type: 'SET_SEARCH_TERM', searchTerm };
+export function setNetStatistics(netStatistics) {
+  console.log('1. action creater called: ', netStatistics);
+  return { type: 'SET_NET_STATISTICS', netStatistics };
 }
 
 // export function addTodo(todo) {
