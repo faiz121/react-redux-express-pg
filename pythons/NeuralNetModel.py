@@ -133,7 +133,7 @@ class NeuralNetModel:
             result = sess.run(tf.argmax(one_hot_result, 1))
             print("one_hot_result: ", one_hot_result)
             print("result: ", result)
-            return result[0], one_hot_result[0].tolist()
+            return int(result[0][0]), one_hot_result[0].tolist()
 
 
 # model = NeuralNetModel()

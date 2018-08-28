@@ -38,27 +38,24 @@ def process_image():
     #
     # utils.save_image(dataUrl)
 
-
-    mnist_guess = np.array([1])
+    mnist_guess = 1
     mnist_one_hot_result = [1, 2, 3, 4, 5]
-    web_canvas_guess = np.array([1])
+    web_canvas_guess = 1
     web_canvas_one_hot_result = [1, 2, 3, 4, 5]
 
     data = [
         {
             'name': 'mnist',
-            'prediciton': int(mnist_guess[0]),
-            'netStatistics': json.dumps(mnist_one_hot_result)
+            'prediciton': mnist_guess,
+            'netStatistics': mnist_one_hot_result
         },
         {
             'name': 'web_canvas',
-            'prediciton': int(web_canvas_guess[0]),
-            'netStatistics': json.dumps(web_canvas_one_hot_result)
+            'prediciton': web_canvas_guess,
+            'netStatistics': web_canvas_one_hot_result
         }
     ]
-    return jsonify(
-        data=json.dumps(data)
-    )
+    return jsonify(netStatistics=data)
 
 @app.route("/add_training_image")
 def add_training_image():

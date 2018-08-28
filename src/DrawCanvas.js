@@ -181,8 +181,9 @@ class DrawCanvas extends React.Component {
     var dataUrl = this.state.canvas.toDataURL("image/png")
     var self = this;
 
-    axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`)
-      .then(function (response) {
+    axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`, {
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function (response) {
         console.log("data back from backend(process_image): ", response);
         self.setState({
           guess: {
