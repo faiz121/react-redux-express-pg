@@ -10,9 +10,24 @@ body {
     background-color: skyblue;
 }
 
-.net-statistics {
+.net-statistics-wrapper {
   background-color: #ffffff;
-  width: 100px;
-  height: 100px;
-  color: red;
+  width: 500px;
+  height: 250px;
+  color: orange;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.net-statistics {
+  background-color: blue;
+  width: 200px;
+  height: 200px;
+}
+
+.one-hot-result-container {
+  background-color: green;
+  width: 180px;
+  height: 150px;
 }

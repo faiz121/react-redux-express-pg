@@ -28,7 +28,7 @@ class OneHotResultChart extends React.Component {
 
   render() {
     return (
-      <div className="net-statistics">
+      <div className="one-hot-result-container">
           {
             this.props.oneHotResult.map( (ohr, i) => {
               return <div key={"ohr" + i}> {ohr} </div>
