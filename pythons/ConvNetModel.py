@@ -3,44 +3,45 @@ import tensorflow as tf
 from create_features_and_labels import create_features_and_labels
 
 
-class NeuralNetModel:
+class ConvNetModel:
     # To build your model, you only to pass a "configuration" which is a dictionary
-    def __init__(self, source, checkpoint_folder="", train_limit=1000, test_limit=5000):
+    def __init__(self, source, checkpoint_folder="/conv", train_limit=1000, test_limit=5000):
         tf.reset_default_graph()
 
-        self.N_NODES_HL1 = 500
-        self.N_NODES_HL2 = 500
-        self.N_NODES_HL3 = 500
 
-        self.N_CLASSES = 10
-        self.BATCH_SIZE = 100
-        self.HM_EPOCHS = 10
+        # Training Parameters
+        self.learning_rate = 0.001
+        self.num_steps = 200
+        self.BATCH_SIZE = 128
+        self.display_step = 10
 
-        self.x = tf.placeholder('float', [None, 784])
-        self.y = tf.placeholder('float')
+        # Network Parameters
+        self.num_input = 784 # MNIST data input (img shape: 28*28)
+        self.num_classes = 10 # MNIST total classes (0-9 digits)
+        self.dropout = 0.75 # Dropout, probability to keep units
 
-        self.hidden_1_layer = {
-            'f_fum': self.N_NODES_HL1,
-            'weights': tf.Variable(tf.random_normal([784, self.N_NODES_HL1])),
-            'biases': tf.Variable(tf.random_normal([self.N_NODES_HL1]))
+        # tf Graph input
+        self.X = tf.placeholder(tf.float32, [None, self.num_input])
+        self.Y = tf.placeholder(tf.float32, [None, self.num_classes])
+        self.keep_prob = tf.placeholder(tf.float32) # dropout (keep probability)
+
+        # Store layers weight & bias
+        self.weights = {
+            # 5x5 conv, 1 input, 32 outputs
+            'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32])),
+            # 5x5 conv, 32 inputs, 64 outputs
+            'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64])),
+            # fully connected, 7*7*64 inputs, 1024 outputs
+            'wd1': tf.Variable(tf.random_normal([7*7*64, 1024])),
+            # 1024 inputs, 10 outputs (class prediction)
+            'out': tf.Variable(tf.random_normal([1024, self.num_classes]))
         }
 
-        self.hidden_2_layer = {
-            'f_fum': self.N_NODES_HL2,
-            'weights': tf.Variable(tf.random_normal([self.N_NODES_HL1, self.N_NODES_HL2])),
-            'biases': tf.Variable(tf.random_normal([self.N_NODES_HL2]))
-        }
-
-        self.hidden_3_layer = {
-            'f_fum': self.N_NODES_HL3,
-            'weights': tf.Variable(tf.random_normal([self.N_NODES_HL2, self.N_NODES_HL3])),
-            'biases': tf.Variable(tf.random_normal([self.N_NODES_HL3]))
-        }
-
-        self.output_layer = {
-            'f_fum':None,
-            'weights':tf.Variable(tf.random_normal([self.N_NODES_HL3, self.N_CLASSES])),
-            'biases':tf.Variable(tf.random_normal([self.N_CLASSES]))
+        self.biases = {
+            'bc1': tf.Variable(tf.random_normal([32])),
+            'bc2': tf.Variable(tf.random_normal([64])),
+            'bd1': tf.Variable(tf.random_normal([1024])),
+            'out': tf.Variable(tf.random_normal([self.num_classes]))
         }
 
         # saves the variables for checkpoints
@@ -51,23 +52,52 @@ class NeuralNetModel:
         self.train_limit = train_limit
         self.test_limit = test_limit
 
-    def create_nnet_model(self, data):
-        print("creating model...")
-        l1 = tf.add(tf.matmul(data, self.hidden_1_layer['weights']), self.hidden_1_layer['biases'])
-        l1 = tf.nn.relu(l1)
+    # Create some wrappers for simplicity
+    def conv2d(self, x, W, b, strides=1):
+        # Conv2D wrapper, with bias and relu activation
+        x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
+        x = tf.nn.bias_add(x, b)
+        return tf.nn.relu(x)
 
-        l2 = tf.add(tf.matmul(l1, self.hidden_2_layer['weights']), self.hidden_2_layer['biases'])
-        l2 = tf.nn.relu(l2)
+    def maxpool2d(self, x, k=2):
+        # MaxPool2D wrapper
+        return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],
+                              padding='SAME')
 
-        l3 = tf.add(tf.matmul(l2, self.hidden_3_layer['weights']), self.hidden_3_layer['biases'])
-        l3 = tf.nn.relu(l3)
 
-        output = tf.matmul(l3, self.output_layer['weights']) + self.output_layer['biases']
-        print("done creating model")
+    # Create model
+    def create_conv_net_model(self, x, weights, biases, dropout):
+        # MNIST data input is a 1-D vector of 784 features (28*28 pixels)
+        # Reshape to match picture format [Height x Width x Channel]
+        # Tensor input become 4-D: [Batch Size, Height, Width, Channel]
+        x = tf.reshape(x, shape=[-1, 28, 28, 1])
 
-        return output
+        # Convolution Layer
+        conv1 = self.conv2d(x, weights['wc1'], biases['bc1'])
+        # Max Pooling (down-sampling)
+        conv1 = self.maxpool2d(conv1, k=2)
 
+        # Convolution Layer
+        conv2 = self.conv2d(conv1, weights['wc2'], biases['bc2'])
+        # Max Pooling (down-sampling)
+        conv2 = self.maxpool2d(conv2, k=2)
+
+        # Fully connected layer
+        # Reshape conv2 output to fit fully connected layer input
+        fc1 = tf.reshape(conv2, [-1, weights['wd1'].get_shape().as_list()[0]])
+        fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
+        fc1 = tf.nn.relu(fc1)
+        # Apply Dropout
+        fc1 = tf.nn.dropout(fc1, dropout)
+
+        # Output, class prediction
+        out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
+        return out
+
+    # create and train model
     def train(self):
+
+        # Get data
         print("training: ", self.checkpoint_folder)
         self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images WHERE source='%s' LIMIT %s""" %(self.source, self.train_limit))
         self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images WHERE source='%s' ORDER BY random() LIMIT %s""" %(self.source, self.test_limit))
@@ -77,37 +107,59 @@ class NeuralNetModel:
         test_x = self.test_x
         test_y = self.test_y
 
-        prediction = self.create_nnet_model(self.x)
-        cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=self.y) )
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(cost)
+        # Construct model
+        logits = self.create_conv_net_model(self.X, self.weights, self.biases, self.keep_prob)
+        prediction = tf.nn.softmax(logits)
 
+        # Define loss and optimizer
+        loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+            logits=logits, labels=self.Y))
+        optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
+        train_op = optimizer.minimize(loss_op)
+
+
+        # Evaluate model
+        correct_pred = tf.equal(tf.argmax(prediction, 1), tf.argmax(self.Y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+        # Initialize the variables (i.e. assign their default value)
+        init = tf.global_variables_initializer()
+
+        # Start training
         with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
 
-            for epoch in range(self.HM_EPOCHS):
-                epoch_loss = 0
-                i=0
-                while i < len(train_x):
+            # Run the initializer
+            sess.run(init)
+
+            i = 0
+            for step in range(1, self.num_steps+1):
+                while i < len(train_x - i - self.BATCH_SIZE):
                     start = i
                     end = i + self.BATCH_SIZE
                     batch_x = np.array(train_x[start:end])
                     batch_y = np.array(train_y[start:end])
 
-                    _, c = sess.run([optimizer, cost], feed_dict={self.x: batch_x,
-                                                                  self.y: batch_y})
-                    epoch_loss += c
+                    # Run optimization op (backprop)
+                    sess.run(train_op, feed_dict={self.X: batch_x, self.Y: batch_y, self.keep_prob: 0.8})
+                    if step % self.display_step == 0 or step == 1:
+                        # Calculate batch loss and accuracy
+                        loss, acc = sess.run([loss_op, accuracy], feed_dict={self.X: batch_x,
+                                                                             self.Y: batch_y,
+                                                                             self.keep_prob: 1.0})
+                        print("Step " + str(step) + ", Minibatch Loss= " + \
+                              "{:.4f}".format(loss) + ", Training Accuracy= " + \
+                              "{:.3f}".format(acc))
                     i += self.BATCH_SIZE
-
                 self.saver.save(sess, self.checkpoint_folder + "/model.ckpt")
-                print('Epoch', epoch + 1, 'completed out of', self.HM_EPOCHS, 'loss:', epoch_loss)
+            print("Optimization Finished!")
 
-            print('prediction: ', prediction)
-            print('tf.argmax(prediction, 1): ', tf.argmax(prediction, 1))
 
-            correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(self.y, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+            loss, acc = sess.run([loss_op, accuracy], feed_dict={self.X: np.array(test_x),
+                                                                 self.Y: np.array(test_y),
+                                                                 self.keep_prob: 1.0})
+            # Calculate accuracy for 256 MNIST test images
+            print("Testing Accuracy:", acc)
 
-            self.accuracy = accuracy.eval({self.x:test_x, self.y:test_y})
 
     def standardize_input_data(self, input):
         if any(item > 1 for item in input):
@@ -119,7 +171,10 @@ class NeuralNetModel:
 
     # np.shape(input_data) === (1, 784)
     def run_model(self, input_data):
-        prediction = self.create_nnet_model(self.x)
+
+        # Construct model
+        logits = self.create_conv_net_model(self.X, self.weights, self.biases, self.keep_prob)
+        prediction = tf.nn.softmax(logits)
 
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
@@ -130,7 +185,7 @@ class NeuralNetModel:
 
             placeholder_y = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
-            one_hot_result = prediction.eval(feed_dict={self.x: [features], self.y: [placeholder_y]})
+            one_hot_result = prediction.eval(feed_dict={self.X: [features], self.Y: [placeholder_y], self.keep_prob: 0.8})
             result = sess.run(tf.argmax(one_hot_result, 1))
             print("one_hot_result: ", one_hot_result)
             print("result: ", result)

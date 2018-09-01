@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 import base64
 from NeuralNetModel import NeuralNetModel
+from ConvNetModel import ConvNetModel
 from add_to_db import add_to_db
 
 
@@ -28,20 +29,29 @@ def process_image():
     np_image = utils.data_url_to_arr(dataUrl, size)
     pixel_arr = utils.np_image_to_array(np_image).tolist()
 
-    mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist", train_limit=5000, test_limit=1000)
+
+    # Regular Neural Net:
+
+    # mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist/normal", train_limit=5000, test_limit=1000)
+    # # mnist_model.train()
+    # mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
+    #
+    # web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas/normal", train_limit=5000, test_limit=1000)
+    # # web_canvas_model.train()
+    # web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
+    #
+    # utils.save_image(dataUrl)
+
+    # Convolutional Neural Net:
+    mnist_model = ConvNetModel(source="mnist", checkpoint_folder="/mnist/conv", train_limit=5000, test_limit=5000)
     # mnist_model.train()
     mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
 
-    web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas", train_limit=5000, test_limit=1000)
-    # web_canvas_model.train()
-    web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
 
-    utils.save_image(dataUrl)
-
-    # mnist_guess = 1
-    # mnist_one_hot_result = [1, 2, 3, 4, 5]
-    # web_canvas_guess = 1
-    # web_canvas_one_hot_result = [1, 2, 3, 4, 5]
+    mnist_guess = 1
+    mnist_one_hot_result = [1, 2, 3, 4, 5]
+    web_canvas_guess = 1
+    web_canvas_one_hot_result = [1, 2, 3, 4, 5]
 
     data = [
         {
