@@ -17,9 +17,5 @@ __pycache__
 config.py
 .DS_Store
 data/
-pythons/tmp/model*
-pythons/tmp/checkpoint
-pythons/tmp/mnist*
-pythons/tmp/web_canvas*
 pythons/tmp*
 pythons/fully_trained*
