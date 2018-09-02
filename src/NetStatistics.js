@@ -36,8 +36,8 @@ class NetStatistics extends React.Component {
           {
             this.props.netStatistics.map( (netStat, i) => {
               return <div key={"netStatList" + i} className="net-statistics">
-                  <div> name: { netStat.name } </div>
-                  <OneHotResultChart name={ netStat.name } oneHotResult={ netStat.oneHotResult } />
+                  <div> name: { netStat.source + "/" + netStat.nn_type } </div>
+                  <OneHotResultChart name={ netStat.source } oneHotResult={ netStat.oneHotResult } />
                   <div> prediction: { netStat.prediction } </div>
               </div>
             })

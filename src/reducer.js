@@ -1,15 +1,29 @@
 const initialState = {
   netStatistics: [
     {
-      'name': 'mnist',
+      'source': 'mnist',
+      'nn_type': 'normal',
       'prediction': 1,
       'oneHotResult': [1, 2, -3, 2, 1, -2 ,3, 8, 0, 9]
     },
     {
-      'name': 'web_canvas',
+      'source': 'web_canvas',
+      'nn_type': 'normal',
       'prediction': 2,
       'oneHotResult': [9, 8, 7, 8, 9, -5, 4, 3, 2, 1]
-    }
+    },
+    {
+      'source': 'mnist',
+      'nn_type': 'conv',
+      'prediction': 3,
+      'oneHotResult': [2, 2, 2, 2, 2, -2, 2, 2, 2, 1]
+    },
+    {
+      'source': 'web_canvas',
+      'nn_type': 'conv',
+      'prediction': 4,
+      'oneHotResult': [3, 3, 3, 5, 5, -5, 5, 5, 3, 1]
+    },
   ],
 };
 

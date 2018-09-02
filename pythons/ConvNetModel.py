@@ -5,7 +5,7 @@ from create_features_and_labels import create_features_and_labels
 
 class ConvNetModel:
     # To build your model, you only to pass a "configuration" which is a dictionary
-    def __init__(self, source, checkpoint_folder="/conv", train_limit=1000, test_limit=5000):
+    def __init__(self, nn_type, source, train_limit=1000, test_limit=5000):
         tf.reset_default_graph()
 
 
@@ -48,7 +48,7 @@ class ConvNetModel:
         self.saver = tf.train.Saver();
         self.source = source
         self.accuracy = 0;
-        self.checkpoint_folder = "./tmp" + checkpoint_folder
+        self.checkpoint_folder = "/".join(["./tmp", nn_type,  source])
         self.train_limit = train_limit
         self.test_limit = test_limit
 

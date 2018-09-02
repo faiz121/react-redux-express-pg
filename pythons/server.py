@@ -29,41 +29,67 @@ def process_image():
     np_image = utils.data_url_to_arr(dataUrl, size)
     pixel_arr = utils.np_image_to_array(np_image).tolist()
 
+    TRAIN_LIMIT = 60000
+    TEST_LIMIT = 5000
 
     # Regular Neural Net:
 
-    # mnist_model = NeuralNetModel(source="mnist", checkpoint_folder="/mnist/normal", train_limit=5000, test_limit=1000)
-    # # mnist_model.train()
-    # mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
-    #
-    # web_canvas_model = NeuralNetModel(source="web_canvas", checkpoint_folder="/web_canvas/normal", train_limit=5000, test_limit=1000)
-    # # web_canvas_model.train()
-    # web_canvas_guess, web_canvas_one_hot_result = web_canvas_model.run_model(pixel_arr)
-    #
+    mnist_normal_model = NeuralNetModel(nn_type="normal", source="mnist", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
+    mnist_normal_model.train()
+    mnist_normal_guess, mnist_normal_one_hot_result = mnist_normal_model.run_model(pixel_arr)
+
+    web_canvas_normal_model = NeuralNetModel(nn_type="normal", source="web_canvas", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
+    web_canvas_normal_model.train()
+    web_canvas_normal_guess, web_canvas_normal_one_hot_result = web_canvas_normal_model.run_model(pixel_arr)
+
     # utils.save_image(dataUrl)
 
     # Convolutional Neural Net:
-    mnist_model = ConvNetModel(source="mnist", checkpoint_folder="/mnist/conv", train_limit=5000, test_limit=5000)
-    # mnist_model.train()
-    mnist_guess, mnist_one_hot_result = mnist_model.run_model(pixel_arr)
+    mnist_conv_model = ConvNetModel(nn_type="conv", source="mnist", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
+    mnist_conv_model.train()
+    mnist_conv_guess, mnist_conv_one_hot_result = mnist_conv_model.run_model(pixel_arr)
 
+    # Convolutional Neural Net:
+    web_canvas_conv_model = ConvNetModel(nn_type="conv", source="web_canvas", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
+    web_canvas_conv_model.train()
+    web_canvas_conv_guess, web_canvas_conv_one_hot_result = web_canvas_conv_model.run_model(pixel_arr)
 
-    mnist_guess = 1
-    mnist_one_hot_result = [1, 2, 3, 4, 5]
-    web_canvas_guess = 1
-    web_canvas_one_hot_result = [1, 2, 3, 4, 5]
+    # mnist_guess = 1
+    # mnist_one_hot_result = [1, 2, 3, 4, 5]
+    # web_canvas_guess = 1
+    # web_canvas_one_hot_result = [1, 2, 3, 4, 5]
+
+    mnist_guess = mnist_conv_guess
+    mnist_one_hot_result = mnist_conv_one_hot_result
+    web_canvas_guess = web_canvas_conv_guess
+    web_canvas_one_hot_result = web_canvas_conv_one_hot_result
 
     data = [
         {
-            'name': 'mnist',
-            'prediction': mnist_guess,
-            'oneHotResult': mnist_one_hot_result
+            'source': 'mnist',
+            'nn_type': 'normal',
+            'prediction': mnist_normal_guess,
+            'oneHotResult': mnist_normal_one_hot_result
         },
         {
-            'name': 'web_canvas',
-            'prediction': web_canvas_guess,
-            'oneHotResult': web_canvas_one_hot_result
-        }
+            'source': 'web_canvas',
+            'nn_type': 'normal',
+            'prediction': web_canvas_normal_guess,
+            'oneHotResult': web_canvas_normal_one_hot_result
+        },
+        {
+            'source': 'mnist',
+            'nn_type': 'conv',
+            'prediction': mnist_conv_guess,
+            'oneHotResult': mnist_conv_one_hot_result
+        },
+        {
+            'source': 'web_canvas',
+            'nn_type': 'conv',
+            'prediction': web_canvas_conv_guess,
+            'oneHotResult': web_canvas_conv_one_hot_result
+        },
+
     ]
     return jsonify(netStatistics=data)
 
