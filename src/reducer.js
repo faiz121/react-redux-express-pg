@@ -1,31 +1,40 @@
 const initialState = {
-  searchTerm: '',
-  todos: [],
-  image: []
+  netStatistics: [
+    {
+      'source': 'mnist',
+      'nn_type': 'normal',
+      'prediction': 1,
+      'oneHotResult': [1, 2, -3, 2, 1, -2 ,3, 8, 0, 9]
+    },
+    {
+      'source': 'web_canvas',
+      'nn_type': 'normal',
+      'prediction': 2,
+      'oneHotResult': [9, 8, 7, 8, 9, -5, 4, 3, 2, 1]
+    },
+    {
+      'source': 'mnist',
+      'nn_type': 'conv',
+      'prediction': 3,
+      'oneHotResult': [2, 2, 2, 2, 2, -2, 2, 2, 2, 1]
+    },
+    {
+      'source': 'web_canvas',
+      'nn_type': 'conv',
+      'prediction': 4,
+      'oneHotResult': [3, 3, 3, 5, 5, -5, 5, 5, 3, 1]
+    },
+  ],
 };
 
-const setSearchTerm = (state, action) => {
-  return Object.assign({}, state, {searchTerm: action.searchTerm});
-};
-
-const addTodos = (state, action) => {
-  const {todos} = state;
-  return Object.assign({}, state, {todos: todos.concat(action.todo)})
-};
-
-const removeTodo = (state, action) => {
-  const {todos} = state;
-  return Object.assign({}, state, {todos: todos.filter((todo) => todo._id !== action.id)})
-};
+const setNetStatistics = (state, action) => {
+  return Object.assign({}, state, {netStatistics: action.netStatistics});
+}
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'SET_SEARCH_TERM':
-      return setSearchTerm(state, action);
-    case 'ADD_TODO':
-      return addTodos(state, action);
-    case 'REMOVE_TODO':
-      return removeTodo(state, action);
+    case 'SET_NET_STATISTICS':
+      return setNetStatistics(state, action);
     default:
       return state
   }

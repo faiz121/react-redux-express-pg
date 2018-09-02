@@ -5,7 +5,8 @@ from create_features_and_labels import create_features_and_labels
 
 class NeuralNetModel:
     # To build your model, you only to pass a "configuration" which is a dictionary
-    def __init__(self):
+    def __init__(self, nn_type, source, train_limit=1000, test_limit=5000):
+        tf.reset_default_graph()
 
         self.N_NODES_HL1 = 500
         self.N_NODES_HL2 = 500
@@ -44,11 +45,11 @@ class NeuralNetModel:
 
         # saves the variables for checkpoints
         self.saver = tf.train.Saver();
-
-        self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images LIMIT 5000""")
-        self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images ORDER BY random() LIMIT 5000""")
-
+        self.source = source
         self.accuracy = 0;
+        self.checkpoint_folder = "/".join(["./tmp", nn_type,  source])
+        self.train_limit = train_limit
+        self.test_limit = test_limit
 
     def create_nnet_model(self, data):
         print("creating model...")
@@ -67,6 +68,11 @@ class NeuralNetModel:
         return output
 
     def train(self):
+        return
+        print("training: ", self.checkpoint_folder)
+        self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images WHERE source='%s' LIMIT %s""" %(self.source, self.train_limit))
+        self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images WHERE source='%s' ORDER BY random() LIMIT %s""" %(self.source, self.test_limit))
+
         train_x = self.train_x
         train_y = self.train_y
         test_x = self.test_x
@@ -77,7 +83,7 @@ class NeuralNetModel:
         optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(cost)
 
         with tf.Session() as sess:
-            sess.run(tf.initialize_all_variables())
+            sess.run(tf.global_variables_initializer())
 
             for epoch in range(self.HM_EPOCHS):
                 epoch_loss = 0
@@ -93,16 +99,46 @@ class NeuralNetModel:
                     epoch_loss += c
                     i += self.BATCH_SIZE
 
-                self.saver.save(sess, "./tmp/model.ckpt")
+                self.saver.save(sess, self.checkpoint_folder + "/model.ckpt")
                 print('Epoch', epoch + 1, 'completed out of', self.HM_EPOCHS, 'loss:', epoch_loss)
+
+            print('prediction: ', prediction)
+            print('tf.argmax(prediction, 1): ', tf.argmax(prediction, 1))
+
             correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(self.y, 1))
             accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
             self.accuracy = accuracy.eval({self.x:test_x, self.y:test_y})
 
-# train_x, train_y = create_features_and_labels("""SELECT * FROM images LIMIT 100""")
-# test_x, test_y = create_features_and_labels("""SELECT *  FROM images ORDER BY random() LIMIT 100""")
+    def standardize_input_data(self, input):
+        if any(item > 1 for item in input):
+            print("standardizing input...")
+            return np.asfarray(np.array(input)) / 255.0 * 1
+        else:
+            print("input already standardized...")
+            return np.array(input)
 
-model = NeuralNetModel()
-model.train()
-print("A's accuracy: ", model.accuracy)
+    # np.shape(input_data) === (1, 784)
+    def run_model(self, input_data):
+        prediction = self.create_nnet_model(self.x)
+
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            self.saver.restore(sess, self.checkpoint_folder + "/model.ckpt")
+            print("input_data: ", input_data)
+            features = self.standardize_input_data(input_data)
+            print("features: ", features)
+
+            placeholder_y = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+            one_hot_result = prediction.eval(feed_dict={self.x: [features], self.y: [placeholder_y]})
+            result = sess.run(tf.argmax(one_hot_result, 1))
+            print("one_hot_result: ", one_hot_result)
+            print("result: ", result)
+            return int(result[0]), one_hot_result[0].tolist()
+
+
+# model = NeuralNetModel()
+# print("model accuracy: ", model.accuracy)
+# should output 7
+# model.run_model([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.027450980392156862, 0.47058823529411764, 0.5725490196078431, 0.5725490196078431, 0.5725490196078431, 0.5725490196078431, 0.6627450980392157, 0.8156862745098039, 0.996078431372549, 1.0, 0.8156862745098039, 0.996078431372549, 0.5607843137254902, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.35294117647058826, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9921568627450981, 0.9254901960784314, 0.12156862745098039, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.023529411764705882, 0.7568627450980392, 0.9725490196078431, 0.9725490196078431, 0.9725490196078431, 0.9725490196078431, 0.9725490196078431, 0.6352941176470588, 0.5450980392156862, 0.5450980392156862, 0.7176470588235294, 0.9921568627450981, 0.7686274509803922, 0.023529411764705882, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3843137254901961, 0.9921568627450981, 0.7372549019607844, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6980392156862745, 0.9921568627450981, 0.4235294117647059, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5882352941176471, 0.9764705882352941, 0.8784313725490196, 0.03529411764705882, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.054901960784313725, 0.8666666666666667, 0.9921568627450981, 0.4666666666666667, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.23137254901960785, 0.9921568627450981, 0.5529411764705883, 0.10980392156862745, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7176470588235294, 0.9921568627450981, 0.18823529411764706, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.23529411764705882, 0.9725490196078431, 0.9921568627450981, 0.18823529411764706, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5137254901960784, 0.9921568627450981, 0.6549019607843137, 0.0392156862745098, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.10980392156862745, 0.8941176470588236, 0.9882352941176471, 0.30980392156862746, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4980392156862745, 0.9921568627450981, 0.9098039215686274, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6352941176470588, 0.9921568627450981, 0.5647058823529412, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2901960784313726, 0.9803921568627451, 0.8, 0.047058823529411764, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7764705882352941, 0.9921568627450981, 0.6313725490196078, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9137254901960784, 0.9921568627450981, 0.2823529411764706, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9137254901960784, 0.7294117647058823, 0.00392156862745098, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9137254901960784, 0.3607843137254902, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.14901960784313725, 0.9215686274509803, 0.20784313725490197, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])

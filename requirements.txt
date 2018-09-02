@@ -5,6 +5,7 @@
 
 # Server
 flask
+flask-cors
 
 # Neural net and related libraries.
 #numpy

@@ -40,12 +40,14 @@ def create_features_and_labels(query):
 
     cur = conn.cursor()
     cur.execute(query)
+    print("query executed")
     rows = cur.fetchall()
 
     features = np.array([])
     labels = np.array([])
 
-    for row in rows:
+    for i, row in enumerate(rows):
+        print(i, "/", len(rows))
         sample_features = convert_string_to_np_array(row[1])
         sample_label = convert_string_to_np_array(row[2])
 

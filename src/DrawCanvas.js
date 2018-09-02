@@ -3,20 +3,26 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux'
 import { SliderPicker } from 'react-color';
 import axios from 'axios'
+import { setNetStatistics } from './action'
 
+
+const DEFAULT_STATE = {
+  canvas: null,
+  context: null,
+  drawing: false,
+  lastX: 0,
+  lastY: 0,
+  history: [],
+  brushColor: '#0000ff',
+  guess: { 'mnist': 0, 'webCanvas': 0},
+  trainingValue: 0,
+}
 class DrawCanvas extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      canvas: null,
-      context: null,
-      drawing: false,
-      lastX: 0,
-      lastY: 0,
-      history: [],
-      brushColor: '#0000ff'
-    };
+    this.state = DEFAULT_STATE;
+    this.onClearButtonClick = this.onClearButtonClick.bind(this);
     // this.handleMouseDown = this.handleMouseDown.bind(this)
     // this.handleMouseUp = this.handleMouseUp.bind(this)
     // this.onClick = this.onClick.bind(this)
@@ -173,12 +179,39 @@ class DrawCanvas extends React.Component {
   onButtonClick(){
     var ctx = this.state.canvas.getContext('2d');
     var dataUrl = this.state.canvas.toDataURL("image/png")
+    var self = this;
 
-    console.log("Data url: ", dataUrl);
+    axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`, {
+      headers: { 'Content-Type': 'application/json' }
+    }).then(function (response) {
+        console.log("data back from backend(process_image): ", response);
+        self.setState({
+          guess: {
+            'mnist': response.data.mnist_guess,
+            'webCanvas': response.data.web_canvas_guess
+          }
+        })
+        self.props.dispatchSetNetStatistics(response.data.netStatistics)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
-    axios.get(`http://localhost:4002/process_image?dataUrl=${encodeURIComponent(dataUrl)}`)
+  onClearButtonClick(){
+    var ctx = this.state.canvas.getContext('2d');
+    ctx.clearRect(0, 0, this.state.canvas.width, this.state.canvas.height);
+  }
+
+  onTrainingButtonClick() {
+    var ctx = this.state.canvas.getContext('2d');
+    var dataUrl = this.state.canvas.toDataURL("image/png")
+    var self = this;
+
+    console.log(`training button clicked... adding ${this.state.trainingValue} to database`)
+    axios.get(`http://localhost:4002/add_training_image?label=${this.state.trainingValue}&dataUrl=${encodeURIComponent(dataUrl)}`)
       .then(function (response) {
-        console.log("data back from backend: ", response);
+        console.log("data back from backend(add_training_image): ", response);
       })
       .catch(function (error) {
         console.log(error);
@@ -186,6 +219,8 @@ class DrawCanvas extends React.Component {
   }
 
   render() {
+    const mnistGuess = this.state.guess.mnist;
+    const webCanvasGuess = this.state.guess.webCanvas;
     return (
       <div>
         <h2>Drawing Canvas </h2>
@@ -203,8 +238,31 @@ class DrawCanvas extends React.Component {
         >
         </canvas>
         <button type="button" onClick = { this.onButtonClick.bind(this) } >
-          Click Me!
+          Test!
         </button>
+        <button type="button" onClick = { this.onClearButtonClick.bind(this) } >
+          Clear
+        </button>
+        <div> mnistGuess: { mnistGuess } </div>
+        <div> webCanvasGuess: { webCanvasGuess } </div>
+        <div> Training </div>
+        <input type="text"
+           onChange={(e) => {
+             const trainingValue = parseInt(e.target.value)
+             if(trainingValue < 0 || trainingValue > 9) {
+               return
+             } else {
+               this.setState({ 'trainingValue': e.target.value })
+             }
+           }}
+           value={this.state.trainingValue}
+            placeholder='search ...'/>
+        <button type="button" onClick = { this.onTrainingButtonClick.bind(this) } >
+          Add Training Data to DB!
+        </button>
+        <div>
+          {this.props.netStatistics.length}
+        </div>
       </div>
     );
   }
@@ -221,7 +279,7 @@ class DrawCanvas extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    image: state.image
+    netStatistics: state.netStatistics
   }
 };
 
@@ -237,9 +295,9 @@ DrawCanvas.defaultProps = {
 const mapDispatchToProps = (dispatch) => {
   // console.log(`setSearchTerm ${setSearchTerm}`);
   return {
-    // dispatchSetSearchTerm (searchTerm) {
-    //   dispatch(setSearchTerm(searchTerm)) // dispatch({ type: 'SET_SEARCH_TERM', searchTerm = searchTerm })
-    // },
+    dispatchSetNetStatistics (netStatistics) {
+      dispatch(setNetStatistics(netStatistics)) // dispatch({ type: 'SET_SEARCH_TERM', searchTerm = searchTerm })
+    },
     // dispatchAddTodo(todo) {
     //   dispatch(postTodoToDB(todo))
     // }

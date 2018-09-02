@@ -21,7 +21,7 @@ I have a non redux, react only todoapp here `https://github.com/faiz121/React-To
 
 ##### Steps
 1. `npm install`
-2. Make sure Postgres is running
-3. Make sure python server is running (and proper packages are installed)
+2. Make sure Postgres is running (postgres app + postico)
+3. `python3 server.py` Make sure you run this from inside `pythons/` python server is running (and proper packages are installed)
 4. `npm run dev` (to start node server and run webpack in watch mode)
 5. Go to `http://localhost:3002`

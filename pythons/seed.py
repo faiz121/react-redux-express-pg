@@ -24,6 +24,7 @@ def seed(filepath):
     data_file.close
 
     for i in range(0, len(image_list)):
+        print("iteration: ", i)
         feature_sets_and_label = image_list[i].split(',')
 
         # Create raw_features (array of 784) with pixel values between 0 and 255
@@ -57,4 +58,4 @@ seed(filename)
 cur.close();
 conn.close();
 
-# python3 pythons/seed.py data/mnist_test_10.csv
+# python3 ./seed.py data/mnist_test_10.csv
