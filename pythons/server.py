@@ -35,23 +35,23 @@ def process_image():
     # Regular Neural Net:
 
     mnist_normal_model = NeuralNetModel(nn_type="normal", source="mnist", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
-    mnist_normal_model.train()
+    # mnist_normal_model.train()
     mnist_normal_guess, mnist_normal_one_hot_result = mnist_normal_model.run_model(pixel_arr)
 
     web_canvas_normal_model = NeuralNetModel(nn_type="normal", source="web_canvas", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
-    web_canvas_normal_model.train()
+    # web_canvas_normal_model.train()
     web_canvas_normal_guess, web_canvas_normal_one_hot_result = web_canvas_normal_model.run_model(pixel_arr)
 
     # utils.save_image(dataUrl)
 
     # Convolutional Neural Net:
     mnist_conv_model = ConvNetModel(nn_type="conv", source="mnist", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
-    mnist_conv_model.train()
+    # mnist_conv_model.train()
     mnist_conv_guess, mnist_conv_one_hot_result = mnist_conv_model.run_model(pixel_arr)
 
     # Convolutional Neural Net:
     web_canvas_conv_model = ConvNetModel(nn_type="conv", source="web_canvas", train_limit=TRAIN_LIMIT, test_limit=TEST_LIMIT)
-    web_canvas_conv_model.train()
+    # web_canvas_conv_model.train()
     web_canvas_conv_guess, web_canvas_conv_one_hot_result = web_canvas_conv_model.run_model(pixel_arr)
 
     # mnist_guess = 1

@@ -22,3 +22,4 @@ pythons/tmp/checkpoint
 pythons/tmp/mnist*
 pythons/tmp/web_canvas*
 pythons/tmp*
+pythons/fully_trained*

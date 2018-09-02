@@ -96,6 +96,7 @@ class ConvNetModel:
 
     # create and train model
     def train(self):
+        return
 
         # Get data
         print("training: ", self.checkpoint_folder)

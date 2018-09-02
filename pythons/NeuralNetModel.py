@@ -68,6 +68,7 @@ class NeuralNetModel:
         return output
 
     def train(self):
+        return
         print("training: ", self.checkpoint_folder)
         self.train_x, self.train_y = create_features_and_labels("""SELECT * FROM images WHERE source='%s' LIMIT %s""" %(self.source, self.train_limit))
         self.test_x, self.test_y = create_features_and_labels("""SELECT *  FROM images WHERE source='%s' ORDER BY random() LIMIT %s""" %(self.source, self.test_limit))
